@@ -1,8 +1,7 @@
 'use client'
 import favicon from "@/app/favicon.ico";
-
-// import getServerSession from '@/lib/getServerSession';
 import { signIn, useSession } from "next-auth/react";
+// import { signIn } from "@/auth";
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
@@ -11,6 +10,8 @@ import UserButton from './UserButton';
 const NavBar = () => {
     const session = useSession()
     const user = session.data?.user
+    // const session = await getServerSession()
+    // const user = session?.user
     return (
         <div className='border-b border-b-slate-200 flex justify-around items-center cursor-pointer'>
             <div className='flex space-x-3 items-center'>
@@ -21,6 +22,7 @@ const NavBar = () => {
                 <div>
                     {user && <UserButton user={user} />}
                     {!user && session.status !== "loading" && <SignInButton />}
+                    {/* {user ? <UserButton user={user} /> : <SignInButton />} */}
                 </div>
             </div>
         </div>
