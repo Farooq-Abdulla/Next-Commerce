@@ -2,7 +2,8 @@ import avatarPlaceholder from "@/public/Avatar Placeholder.png";
 import { Lock, LogOut, Settings } from "lucide-react";
 import { User } from "next-auth";
 
-import { signOut } from "@/auth";
+// import { signOut } from "@/auth";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -55,7 +56,7 @@ export default function UserButton({ user }: UserButtonProps) {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <form
+                    {/* <form
                         action={async () => {
                             "use server";
                             await signOut();
@@ -64,7 +65,13 @@ export default function UserButton({ user }: UserButtonProps) {
                         <button type="submit" className="flex w-full items-center cursor-pointer">
                             <LogOut className="mr-2 h-4 w-4" /> Sign Out
                         </button>
-                    </form>
+                    </form> */}
+                    <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="flex w-full items-center"
+                    >
+                        <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                    </button>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

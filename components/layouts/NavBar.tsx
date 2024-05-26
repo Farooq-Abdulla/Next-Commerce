@@ -1,14 +1,16 @@
+'use client'
 import favicon from "@/app/favicon.ico";
-import { signIn } from '@/auth';
-import getServerSession from '@/lib/getServerSession';
+
+// import getServerSession from '@/lib/getServerSession';
+import { signIn, useSession } from "next-auth/react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import UserButton from './UserButton';
 
-const NavBar = async () => {
-    const session = await getServerSession();
-    const user = session?.user
+const NavBar = () => {
+    const session = useSession()
+    const user = session.data?.user
     return (
         <div className='border-b border-b-slate-200 flex justify-around items-center cursor-pointer'>
             <div className='flex space-x-3 items-center'>
@@ -17,7 +19,8 @@ const NavBar = async () => {
             </div>
             <div>
                 <div>
-                    {user ? <UserButton user={user} /> : <SignInButton />}
+                    {user && <UserButton user={user} />}
+                    {!user && session.status !== "loading" && <SignInButton />}
                 </div>
             </div>
         </div>
@@ -26,15 +29,19 @@ const NavBar = async () => {
 
 export default NavBar
 
+// function SignInButton() {
+//     return (
+//         <form
+//             action={async () => {
+//                 "use server";
+//                 await signIn();
+//             }}
+//         >
+//             <Button type="submit">Sign in</Button>
+//         </form>
+//     );
+// }
+
 function SignInButton() {
-    return (
-        <form
-            action={async () => {
-                "use server";
-                await signIn();
-            }}
-        >
-            <Button type="submit">Sign in</Button>
-        </form>
-    );
+    return <Button onClick={() => signIn()}>Sign in</Button>;
 }
