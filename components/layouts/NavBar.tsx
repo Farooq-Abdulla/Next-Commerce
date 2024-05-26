@@ -1,3 +1,4 @@
+import favicon from "@/app/favicon.ico";
 import { signIn } from '@/auth';
 import getServerSession from '@/lib/getServerSession';
 import Image from 'next/image';
@@ -11,7 +12,7 @@ const NavBar = async () => {
     return (
         <div className='border-b border-b-slate-200 flex justify-around items-center cursor-pointer'>
             <div className='flex space-x-3 items-center'>
-                <Image src={"/favicon.ico"} alt='Logo' width={50} height={50} />
+                <Image src={favicon} alt='Logo' width={50} height={50} />
                 <Link href={'/'} className='text-pretty text-lg hover:text-slate-400'>NextCommerce</Link>
             </div>
             <div>
