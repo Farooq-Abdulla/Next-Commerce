@@ -14,18 +14,20 @@ const NavBar = () => {
     // const session = await getServerSession()
     // const user = session?.user
     return (
-        <div className='border-b border-b-slate-200 flex justify-around items-center mt-2 '>
-            <div className='flex space-x-3 items-center cursor-pointer'>
-                <Image src={favicon} alt='Logo' width={50} height={50} />
-                <Link href={'/'} className='text-pretty text-lg hover:text-slate-400'>NextCommerce</Link>
+        <div className="relative z-40">
+            <div className='border-b border-b-slate-200 flex justify-around items-center m-2 sticky top-0 shadow  '>
+                <div className='flex space-x-3 items-center cursor-pointer'>
+                    <Image src={favicon} alt='Logo' width={50} height={50} />
+                    <Link href={'/'} className='text-pretty text-lg hover:text-slate-400'>NextCommerce</Link>
 
-            </div>
-            <div className="flex space-x-4 items-center cursor-pointer">
-                <PageTheme />
-                <div>
-                    {user && <UserButton user={user} />}
-                    {!user && session.status !== "loading" && <SignInButton />}
-                    {/* {user ? <UserButton user={user} /> : <SignInButton />} */}
+                </div>
+                <div className="flex space-x-4 items-center cursor-pointer">
+                    <PageTheme />
+                    <div>
+                        {user && <UserButton user={user} />}
+                        {!user && session.status !== "loading" && <SignInButton />}
+                        {/* {user ? <UserButton user={user} /> : <SignInButton />} */}
+                    </div>
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { redirect } from "next/navigation";
-import { StoreProduct } from "../ServerActions/StoreProduct";
+import { StoreProduct } from "../../ServerActions/StoreProduct";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/use-toast";
 
