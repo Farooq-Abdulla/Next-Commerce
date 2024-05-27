@@ -1,4 +1,6 @@
 import NavBar from "@/components/layouts/NavBar";
+import { Toaster } from "@/components/ui/toaster";
+import NextThemesProvider from "@/lib/Providers";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
@@ -17,12 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <SessionProvider>
-          <NavBar />
-          <main>{children}</main>
-        </SessionProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        <NextThemesProvider>
+          <SessionProvider>
+            <NavBar />
+            <main>{children}</main>
+            <Toaster />
+          </SessionProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );
