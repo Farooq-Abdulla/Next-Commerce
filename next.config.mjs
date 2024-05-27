@@ -5,6 +5,10 @@ const nextConfig = {
       {
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "d2gzwh8fr2ff6c.cloudfront.net",
+      },
     ],
   },
 };
