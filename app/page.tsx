@@ -1,4 +1,5 @@
 import { LayoutGridDemo } from "@/components/layouts/ProductsHome";
+import { BentoGridDemo } from "@/components/layouts/ProductsSection";
 import { SparklesLogo } from "@/components/layouts/SparkleLogo";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <div>
       <SparklesLogo />
       <LayoutGridDemo />
+      <BentoGridDemo />
     </div>
   );
 }
