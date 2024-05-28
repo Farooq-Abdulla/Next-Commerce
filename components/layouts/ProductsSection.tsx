@@ -1,18 +1,27 @@
 'use client'
 import { cn } from "@/lib/utils";
 import { GetAllProducts } from "@/ServerActions/GetProducts";
-import { Product } from "@prisma/client";
 import {
     IconSignature
 } from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
 
-
+export type ClientProduct = {
+    id: string;
+    name: string;
+    description: string;
+    imageUrl: string;
+    price: number;
+    createdAt: Date;
+    updatedAt: Date;
+};
 
 export function BentoGridDemo() {
-    const [products, setProducts] = useState<Product[]>([]);
+    const router = useRouter()
+    const [products, setProducts] = useState<ClientProduct[]>([]);
 
     useEffect(() => {
         GetAllProducts().then((result) => { setProducts(result); }).catch((error) => {
@@ -20,7 +29,7 @@ export function BentoGridDemo() {
         })
     }, [])
     return (
-        <BentoGrid className="max-w-4xl mx-auto">
+        <BentoGrid className="max-w-4xl mx-auto cursor-pointer">
             {products.map((product, i) => {
                 return (
                     <BentoGridItem
@@ -30,6 +39,7 @@ export function BentoGridDemo() {
                         header={<Skeleton imageUrl={product.imageUrl} />}
                         className={i === 3 || i === 6 ? "md:col-span-2" : ""}
                         icon={<IconSignature className="h-4 w-4 text-neutral-500" />}
+                        onClick={() => router.push(`/${product.id}`)}
                     />
                 )
             })}

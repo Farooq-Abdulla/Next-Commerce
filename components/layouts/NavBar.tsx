@@ -14,11 +14,11 @@ const NavBar = () => {
     // const session = await getServerSession()
     // const user = session?.user
     return (
-        <div className="relative z-40">
-            <div className='border-b border-b-slate-200 flex justify-around items-center m-2 sticky top-0 shadow  '>
+        <div className="sticky top-1 z-40  ">
+            <div className='border-b-current  text-current bg-slate-950 mx-64 mt-2 flex justify-around shadow items-center sticky z-50  rounded-full '>
                 <div className='flex space-x-3 items-center cursor-pointer'>
                     <Image src={favicon} alt='Logo' width={50} height={50} />
-                    <Link href={'/'} className='text-pretty text-lg hover:text-slate-400'>NextCommerce</Link>
+                    <Link href={'/'} className='text-pretty text-white text-lg hover:text-slate-400'>NextCommerce</Link>
 
                 </div>
                 <div className="flex space-x-4 items-center cursor-pointer">

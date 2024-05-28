@@ -25,7 +25,7 @@ const PageTheme = () => {
         return <Sun onClick={() => setTheme('light')} />
     }
     if (resolvedTheme === 'light') {
-        return <Moon onClick={() => setTheme('dark')} />
+        return <Moon onClick={() => setTheme('dark')} className='text-white' />
     }
 }
 
