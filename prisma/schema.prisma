@@ -21,62 +21,40 @@ enum Role {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   name        String
   description String
   imageUrl    String
   price       Decimal
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  // CartItem    CartItem[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  CartItem    CartItem[]
 
   @@map("products")
 }
 
-// model Cart {
-//   id        String   @id @default(cuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   userId    String
-//   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   select    Boolean  @default(true)
+model Cart {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  anonymousId String?    @unique
+  userId      String?    @unique
+  user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  CartItem    CartItem[]
+}
 
-//   CartItem CartItem[]
-//   Order    Order[]
-// }
+model CartItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quantity  Int
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
-// model CartItem {
-//   id        String   @id @default(cuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   quantity  Int
-//   productId String
-//   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-//   cartId    String
-//   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-// }
-
-// model Order {
-//   id        String   @id @default(cuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   // userId    String
-//   // user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   cartId    String
-//   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-
-//   orderValue Decimal
-//   Payment    Payment[]
-// }
-// 
-
-// model Payment {
-//   id        String   @id @default(cuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   paymentId String
-//   order     Order    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-// }
+  @@unique([cartId, productId])
+}
 
 model User {
   id            String    @id @default(cuid())
@@ -90,9 +68,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  // Address   Address[]
-  // Order     Order[]
-  // Cart      Cart[]
+  Cart      Cart?
 
   @@map("users")
 }

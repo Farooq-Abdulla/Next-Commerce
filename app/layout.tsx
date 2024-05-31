@@ -1,6 +1,7 @@
 import NavBar from "@/components/layouts/NavBar";
 import { Toaster } from "@/components/ui/toaster";
 import NextThemesProvider from "@/lib/Providers";
+import RecoilContextProvider from "@/lib/RecoilContextProvider";
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
@@ -21,13 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <NextThemesProvider>
-          <SessionProvider>
-            <NavBar />
-            <main>{children}</main>
-            <Toaster />
-          </SessionProvider>
-        </NextThemesProvider>
+        <RecoilContextProvider>
+          <NextThemesProvider>
+            <SessionProvider>
+              <NavBar />
+              <main>{children}</main>
+              <Toaster />
+            </SessionProvider>
+          </NextThemesProvider>
+        </RecoilContextProvider>
       </body>
     </html>
   );
