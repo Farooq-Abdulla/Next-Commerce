@@ -10,9 +10,11 @@ const RecoilContextProvider = ({ children }: { children: React.ReactNode }) => {
     )
 }
 
-export const CarousalNumber = atom({
-    key: "CarousalNumber",
-    default: 0,
-})
+export const CartLengthAtom = atom({
+    key: 'CartLengthAtom',
+    default: 0
+});
+
+
 
 export default RecoilContextProvider

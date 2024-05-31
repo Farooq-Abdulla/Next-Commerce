@@ -5,7 +5,7 @@ import { SparklesLogo } from "@/components/layouts/SparkleLogo";
 
 export default function Home() {
   return (
-    <div>
+    <div className="mx-auto">
 
       <SparklesLogo />
 
