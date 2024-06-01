@@ -4,7 +4,7 @@ import getServerSession from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 
-export async function UpdateCartIcon() {
+export async function GetCartLength_Server() {
   const session = await getServerSession();
   const user = session?.user;
   const cookieStore = cookies();

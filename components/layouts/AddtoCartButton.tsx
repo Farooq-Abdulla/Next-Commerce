@@ -1,6 +1,7 @@
 'use client'
 import { CartLengthAtom } from '@/lib/RecoilContextProvider';
 import { AddProductInCart } from '@/ServerActions/AddProductInCart';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Button } from '../ui/AcertinityButton';
@@ -8,6 +9,7 @@ import { Button } from '../ui/AcertinityButton';
 const AddtoCartButton = ({ ProductID }: { ProductID: string }) => {
     const [clicked, setClicked] = useState(false);
     const [CartLength, setCartLength] = useRecoilState(CartLengthAtom);
+    const router = useRouter()
 
     useEffect(() => {
         // Initialize CartLength from local storage when component mounts
@@ -26,7 +28,8 @@ const AddtoCartButton = ({ ProductID }: { ProductID: string }) => {
         }, 500);
 
         // Store the updated CartLength value in local storage
-        localStorage.setItem('CartLength', String(CartLength + 1));
+        // localStorage.setItem('CartLength', String(CartLength + 1));
+        // router.push(`/${ProductID}`)
     }
 
     return (
