@@ -36,6 +36,9 @@ const CartComponent = () => {
 
     //     }
     // }, [shouldRefresh, router]);
+    if (cartDetails === null) {
+        return <NullCart />
+    }
 
     if (!cartDetails) {
         return <Loading />;
