@@ -6,26 +6,32 @@ import { Button } from '@/components/ui/AcertinityButton';
 import { SetQuantity } from '@/components/ui/SetQuantity';
 import { TracingBeam } from '@/components/ui/tracing-beam';
 import { GetCartDetails } from '@/ServerActions/GetCartDetails';
+import { GetCartLength_Server } from '@/ServerActions/GetCartLength_Server';
 import { RemoveProductFromCart } from '@/ServerActions/RemoveProductFromCart';
 import { Cart, CartItem } from '@prisma/client';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { twMerge } from "tailwind-merge";
 import Loading from './loading';
 
 const CartComponent = () => {
 
-
+    const router = useRouter();
     const [cartDetails, setCartDetails] = useState<Cart & { CartItem: (CartItem & { product: any })[] } | null>(null);
+    const [totalPrice, setTotalPrice] = useState(0)
 
 
     useEffect(() => {
         const fetchCartDetails = async () => {
             const details = await GetCartDetails();
-            if (details) {
+            const { totalCartCost } = await GetCartLength_Server()
+            if (details && totalCartCost) {
                 setCartDetails(details);
+                setTotalPrice(totalCartCost)
             } else {
                 setCartDetails(null);
+                setTotalPrice(0)
             }
         };
 
@@ -36,12 +42,13 @@ const CartComponent = () => {
 
     //     }
     // }, [shouldRefresh, router]);
-    if (cartDetails === null) {
-        return <NullCart />
-    }
+
 
     if (!cartDetails) {
         return <Loading />;
+    }
+    if (cartDetails === null) {
+        return <NullCart />
     }
     if (cartDetails.CartItem.length === 0) {
         return <NullCart />
@@ -64,7 +71,10 @@ const CartComponent = () => {
             <div className="text-4xl sm:text-7xl font-bold relative z-20 bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-500 py-8"></div>
 
             <div className="container h-fit mx-auto p-4">
-                <h2 className="text-2xl font-bold mb-4 text-center">Your Cart</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Your Cart total ${totalPrice.toFixed(2)} </h2>
+                <div className="flex justify-center">
+                    <Button className="mb-4" onClick={() => router.push("/checkout")}>Checkout</Button>
+                </div>
 
                 <TracingBeam className="px-6">
                     <div className="max-w-2xl mx-auto antialiased pt-4 relative">
@@ -95,6 +105,9 @@ const CartComponent = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                    <div className="flex justify-center">
+                        <Button className="mb-4" onClick={() => router.push("/checkout")}>Checkout</Button>
                     </div>
                 </TracingBeam>
             </div>

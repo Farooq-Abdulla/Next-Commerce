@@ -19,6 +19,7 @@ import UserButton from './UserButton';
 
 
 
+
 const NavBar = () => {
     const session = useSession();
     const user = session.data?.user;
@@ -58,7 +59,7 @@ const NavBar = () => {
         const updateUserCart = async () => {
             if (user) {
                 await MergeCarts()
-                const totalCartLength = await GetCartLength_Server(); // Fetch updated cart length
+                const { totalCartLength } = await GetCartLength_Server(); // Fetch updated cart length
                 // console.log(totalCartLength)
                 setCartLength(totalCartLength); // Update state with fetched cart length
                 // localStorage.setItem('CartLength', String(totalCartLength));
@@ -75,7 +76,7 @@ const NavBar = () => {
 
         // }
         const something = async () => {
-            const totalCartLength = await GetCartLength_Server();
+            const { totalCartLength } = await GetCartLength_Server();
             setCartLength(totalCartLength)
         }
         something()

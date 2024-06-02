@@ -13,6 +13,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.role = user.role;
       return session;
     },
+    authorized({ request, auth }) {
+      const { pathname } = request.nextUrl;
+      if (pathname === "/checkout") {
+        return false;
+      }
+      return true;
+    },
   },
   providers: [Google],
 });

@@ -5,38 +5,58 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 
 export async function GetCartLength_Server() {
-  const session = await getServerSession();
-  const user = session?.user;
-  const cookieStore = cookies();
-  const anonymousCartId = cookieStore.get("anonymousCartId")?.value;
-  let totalCartLength = 0;
-  if (!anonymousCartId) {
-    return 0;
-  }
+  try {
+    const session = await getServerSession();
+    const user = session?.user;
+    const cookieStore = cookies();
+    const anonymousCartId = cookieStore.get("anonymousCartId")?.value;
 
-  if (user) {
-    const userCart = await prisma.cart.findUnique({
-      where: { userId: user.id },
-      include: { CartItem: true },
-    });
+    let totalCartLength = 0;
+    let totalCartCost = 0;
 
-    if (userCart) {
-      userCart.CartItem.forEach((item) => {
-        totalCartLength += item.quantity;
-      });
+    if (anonymousCartId) {
+      if (user) {
+        const userCart = await prisma.cart.findUnique({
+          where: { userId: user.id },
+          include: {
+            CartItem: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        });
+
+        if (userCart) {
+          userCart.CartItem.forEach((item) => {
+            totalCartLength += item.quantity;
+            totalCartCost += item.product.price.toNumber() * item.quantity;
+          });
+        }
+      } else {
+        const anonymousCart = await prisma.cart.findUnique({
+          where: { id: anonymousCartId },
+          include: {
+            CartItem: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        });
+
+        if (anonymousCart) {
+          anonymousCart.CartItem.forEach((item) => {
+            totalCartLength += item.quantity;
+            totalCartCost += item.product.price.toNumber() * item.quantity;
+          });
+        }
+      }
     }
-  } else {
-    const anonymousCart = await prisma.cart.findUnique({
-      where: { id: anonymousCartId },
-      include: { CartItem: true },
-    });
 
-    if (anonymousCart) {
-      anonymousCart.CartItem.forEach((item) => {
-        totalCartLength += item.quantity;
-      });
-    }
+    return { totalCartLength, totalCartCost };
+  } catch (error) {
+    console.error("Error fetching cart details:", error);
+    return { totalCartLength: 0, totalCartCost: 0 };
   }
-
-  return totalCartLength;
 }
