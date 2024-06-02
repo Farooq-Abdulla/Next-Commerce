@@ -13,14 +13,14 @@ export async function CheckForAnonymousCartId() {
     return null;
   }
   if (!user) {
-    const anonymousCartId = await prisma.cart.findUnique({
+    const anonymousCart = await prisma.cart.findUnique({
       where: {
         anonymousId: anonymousId,
       },
     });
-    if (anonymousCartId) {
-      cookieStore.set("anonymousCartId", anonymousCartId.id);
-      return anonymousCartId.id;
+    if (anonymousCart) {
+      cookieStore.set("anonymousCartId", anonymousCart.id);
+      return anonymousCart.id;
     } else {
       return null;
     }

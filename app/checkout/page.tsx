@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import Loading from '../cart/loading';
+import Loading from '../cart/_loading';
 
 import {
     Form,

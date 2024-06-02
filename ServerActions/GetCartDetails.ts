@@ -2,14 +2,16 @@
 import getServerSession from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+
 import { cookies } from "next/headers";
-import { CheckForAnonymousCartId } from "./CheckForAnonymousCartId";
 
 export async function GetCartDetails() {
   const session = await getServerSession();
   const user: User | null = session?.user;
   const cookieStore = cookies();
-  const anonymousCartId = await CheckForAnonymousCartId();
+  // const anonymousCartId = await CheckForAnonymousCartId();
+  const anonymousCartId = cookieStore.get("anonymousCartId")?.value;
 
   try {
     const CartDetails = await prisma.cart.findFirst({
@@ -37,6 +39,7 @@ export async function GetCartDetails() {
           },
         })),
       };
+      revalidatePath("/");
       return plainCartDetails;
     } else {
       return null;

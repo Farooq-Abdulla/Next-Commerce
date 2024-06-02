@@ -1,42 +1,46 @@
-'use client'
 
 
+
+import { CheckOutButton } from '@/components/layouts/CartClientComp';
 import { NullCart } from '@/components/layouts/NullCart';
-import { Button } from '@/components/ui/AcertinityButton';
 import { SetQuantity } from '@/components/ui/SetQuantity';
 import { TracingBeam } from '@/components/ui/tracing-beam';
 import { GetCartDetails } from '@/ServerActions/GetCartDetails';
 import { GetCartLength_Server } from '@/ServerActions/GetCartLength_Server';
 import { RemoveProductFromCart } from '@/ServerActions/RemoveProductFromCart';
-import { Cart, CartItem } from '@prisma/client';
+
+
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
 import { twMerge } from "tailwind-merge";
-import Loading from './loading';
 
-const CartComponent = () => {
-
-    const router = useRouter();
-    const [cartDetails, setCartDetails] = useState<Cart & { CartItem: (CartItem & { product: any })[] } | null>(null);
-    const [totalPrice, setTotalPrice] = useState(0)
+const CartComponent = async () => {
 
 
-    useEffect(() => {
-        const fetchCartDetails = async () => {
-            const details = await GetCartDetails();
-            const { totalCartCost } = await GetCartLength_Server()
-            if (details && totalCartCost) {
-                setCartDetails(details);
-                setTotalPrice(totalCartCost)
-            } else {
-                setCartDetails(null);
-                setTotalPrice(0)
-            }
-        };
 
-        fetchCartDetails();
-    }, []);
+    // const [cartDetails, setCartDetails] = useState<Cart & { CartItem: (CartItem & { product: any })[] } | null>(null);
+    // const [totalPrice, setTotalPrice] = useState(0)
+
+
+
+    const cartDetails = await GetCartDetails();
+    const { totalCartCost } = await GetCartLength_Server()
+
+    // useEffect(() => {
+    //     const fetchCartDetails = async () => {
+    //         const details = await GetCartDetails();
+    //         const { totalCartCost } = await GetCartLength_Server()
+    //         if (details && totalCartCost) {
+    //             setCartDetails(details);
+    //             setTotalPrice(totalCartCost)
+    //         } else {
+    //             setCartDetails(null);
+    //             setTotalPrice(0)
+    //         }
+    //     };
+
+    //     fetchCartDetails();
+    // }, []);
     // useEffect(() => {
     //     if (shouldRefresh) {
 
@@ -44,9 +48,9 @@ const CartComponent = () => {
     // }, [shouldRefresh, router]);
 
 
-    if (!cartDetails) {
-        return <Loading />;
-    }
+    // if (!cartDetails) {
+    //     return <Loading />;
+    // }
     if (cartDetails === null) {
         return <NullCart />
     }
@@ -58,7 +62,6 @@ const CartComponent = () => {
 
     const RemoveFromCart = async (itemId: string, cartId: string) => {
         await RemoveProductFromCart(itemId, cartId);
-        window.location.reload();
 
     };
 
@@ -71,21 +74,21 @@ const CartComponent = () => {
             <div className="text-4xl sm:text-7xl font-bold relative z-20 bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-500 py-8"></div>
 
             <div className="container h-fit mx-auto p-4">
-                <h2 className="text-2xl font-bold mb-4 text-center">Your Cart total ${totalPrice.toFixed(2)} </h2>
+                <h2 className="text-2xl font-bold mb-4 text-center">Your Cart total ${totalCartCost.toFixed(2)} </h2>
                 <div className="flex justify-center">
-                    <Button className="mb-4" onClick={() => router.push("/checkout")}>Checkout</Button>
+                    <CheckOutButton />
                 </div>
 
                 <TracingBeam className="px-6">
                     <div className="max-w-2xl mx-auto antialiased pt-4 relative">
 
-                        {cartDetails.CartItem.map((item) => (
+                        {cartDetails?.CartItem.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((item) => (
                             <div key={item.id} className="mb-10">
                                 <div className='flex justify-between items-center'>
                                     <p className={twMerge("text-xl mb-4 font-mono font-bold dark:text-white text-black")}>
                                         {item.product.name}
                                     </p>
-                                    <Button className='mb-4' onClick={() => RemoveFromCart(item.id, item.cartId)}>Remove from Cart</Button>
+                                    {/* <RemoveFromCartButton onClick={() => RemoveFromCart(item.id, item.cartId)} /> */}
                                 </div>
 
                                 <div className="text-sm  prose prose-sm dark:prose-invert">
@@ -107,7 +110,7 @@ const CartComponent = () => {
                         ))}
                     </div>
                     <div className="flex justify-center">
-                        <Button className="mb-4" onClick={() => router.push("/checkout")}>Checkout</Button>
+                        <CheckOutButton />
                     </div>
                 </TracingBeam>
             </div>

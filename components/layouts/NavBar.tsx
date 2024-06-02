@@ -95,10 +95,10 @@ const NavBar = () => {
                 </div></Link>
                 <div className="flex space-x-4 items-center cursor-pointer md:visible">
                     <PageTheme />
-                    <span><Link href={"/cart"} className='text-pretty text-white text-lg hover:text-slate-400 relative'><ShoppingCart className="" />
+                    <span onClick={() => { router.push("/cart"), router.refresh() }} className='text-pretty text-white text-lg hover:text-slate-400 relative'><ShoppingCart className="" />
                         <span className="absolute top-0 left-1/2 -mt-1/2 -ml-0 flex items-center justify-center w-3 h-3  text-xs p-2 text-red-800 bg-white rounded-full">
                             {CartLength}
-                        </span> </Link></span>
+                        </span> </span>
                     <div>
                         {user && <UserButton user={user} />}
                         {!user && session.status !== "loading" && <SignInButton />}
