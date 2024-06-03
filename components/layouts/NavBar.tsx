@@ -76,7 +76,9 @@ const NavBar = () => {
 
         // }
         const something = async () => {
+            console.log("In something")
             const { totalCartLength } = await GetCartLength_Server();
+            console.log(totalCartLength)
             setCartLength(totalCartLength)
         }
         something()

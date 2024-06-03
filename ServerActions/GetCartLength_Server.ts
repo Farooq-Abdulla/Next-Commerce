@@ -52,6 +52,27 @@ export async function GetCartLength_Server() {
           });
         }
       }
+    } else {
+      const userCart = await prisma.cart.findFirst({
+        where: { userId: user?.id },
+        include: {
+          CartItem: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      if (userCart) {
+        console.log(userCart);
+        userCart.CartItem.forEach((item) => {
+          totalCartLength += item.quantity;
+          totalCartCost += item.product.price.toNumber() * item.quantity;
+        });
+      } else {
+        totalCartLength = 0;
+      }
     }
 
     return { totalCartLength, totalCartCost };
