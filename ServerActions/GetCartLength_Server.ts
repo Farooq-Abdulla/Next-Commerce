@@ -9,12 +9,12 @@ export async function GetCartLength_Server() {
     const session = await getServerSession();
     const user = session?.user;
     const cookieStore = cookies();
-    const anonymousCartId = cookieStore.get("anonymousCartId")?.value;
+    const anonymousId = cookieStore.get("anonymousId")?.value;
 
     let totalCartLength = 0;
     let totalCartCost = 0;
 
-    if (anonymousCartId) {
+    if (anonymousId) {
       if (user) {
         const userCart = await prisma.cart.findUnique({
           where: { userId: user.id },
@@ -35,7 +35,7 @@ export async function GetCartLength_Server() {
         }
       } else {
         const anonymousCart = await prisma.cart.findUnique({
-          where: { id: anonymousCartId },
+          where: { anonymousId: anonymousId },
           include: {
             CartItem: {
               include: {
@@ -52,9 +52,9 @@ export async function GetCartLength_Server() {
           });
         }
       }
-    } else {
-      const userCart = await prisma.cart.findFirst({
-        where: { userId: user?.id },
+    } else if (user) {
+      const userCart = await prisma.cart.findUnique({
+        where: { userId: user.id },
         include: {
           CartItem: {
             include: {
@@ -65,7 +65,6 @@ export async function GetCartLength_Server() {
       });
 
       if (userCart) {
-        console.log(userCart);
         userCart.CartItem.forEach((item) => {
           totalCartLength += item.quantity;
           totalCartCost += item.product.price.toNumber() * item.quantity;

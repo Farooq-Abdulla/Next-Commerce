@@ -72,13 +72,14 @@ const NavBar = () => {
         }
         // if (session.status === 'unauthenticated') {
         //     // localStorage.removeItem('CartLength')
-        //     setCartLength(0)
+        //     // setCartLength(0)
 
+        //     console.log("unauthenticated")
+        //     setCartLength(0)
         // }
+
         const something = async () => {
-            console.log("In something")
             const { totalCartLength } = await GetCartLength_Server();
-            console.log(totalCartLength)
             setCartLength(totalCartLength)
         }
         something()

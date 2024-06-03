@@ -11,12 +11,12 @@ export async function GetCartDetails() {
   const user: User | null = session?.user;
   const cookieStore = cookies();
   // const anonymousCartId = await CheckForAnonymousCartId();
-  const anonymousCartId = cookieStore.get("anonymousCartId")?.value;
+  const anonymousId = cookieStore.get("anonymousId")?.value;
 
   try {
     const CartDetails = await prisma.cart.findFirst({
       where: {
-        OR: [{ userId: user?.id }, { id: anonymousCartId! }],
+        OR: [{ userId: user?.id }, { anonymousId: anonymousId! }],
       },
       include: {
         CartItem: {
