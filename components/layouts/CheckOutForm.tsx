@@ -96,7 +96,7 @@ const CheckOutForm = ({ totalCartCost, cartDetails }: Props) => {
                     </div>
                     <TracingBeam className="px-6">
                         <Form {...form} >
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" suppressHydrationWarning>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" >
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                                     <div className="md:col-span-2 font-mono">
                                         <div className="mb-6">
