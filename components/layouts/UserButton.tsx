@@ -6,7 +6,8 @@ import { User } from "next-auth";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
+
+import { ButtonShadcn } from "../ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -25,7 +26,7 @@ export default function UserButton({ user }: UserButtonProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button size="icon" className="flex-none rounded-full">
+                <ButtonShadcn size="icon" className="flex-none rounded-full">
                     <Image
                         src={user.image || avatarPlaceholder}
                         alt="User profile picture"
@@ -33,7 +34,7 @@ export default function UserButton({ user }: UserButtonProps) {
                         height={50}
                         className="aspect-square rounded-full bg-background object-cover"
                     />
-                </Button>
+                </ButtonShadcn>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Hi {user.name || "User"}</DropdownMenuLabel>

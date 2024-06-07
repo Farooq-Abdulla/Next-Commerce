@@ -6,7 +6,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
+import { ButtonShadcn } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -86,13 +86,13 @@ export function InputForm() {
                     title: "Product Created",
                     description: "Your product has been created successfully",
                     action: (
-                        <Button
+                        <ButtonShadcn
                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                             type="submit"
                             onClick={() => redirect('/')}
                         >
                             View Product
-                        </Button>
+                        </ButtonShadcn>
                     ),
                 });
 
@@ -187,7 +187,7 @@ export function InputForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "loading..." : "Submit"}</Button>
+                <ButtonShadcn type="submit" disabled={isSubmitting}>{isSubmitting ? "loading..." : "Submit"}</ButtonShadcn>
             </form>
         </Form>
     );

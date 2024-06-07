@@ -43,6 +43,19 @@ model Cart {
   CartItem    CartItem[]
 }
 
+model Address {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model CartItem {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -66,9 +79,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   Cart      Cart?
+  Address   Address[]
 
   @@map("users")
 }

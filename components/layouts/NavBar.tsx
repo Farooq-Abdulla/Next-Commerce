@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { Button } from '../ui/button';
+import { ButtonShadcn } from '../ui/button';
 import PageTheme from "./PageTheme";
 import UserButton from './UserButton';
 
@@ -133,10 +133,10 @@ function SignInButton() {
     return (
         <>
 
-            <Button className="rounded-3xl" onClick={async () => {
+            <ButtonShadcn className="rounded-3xl" onClick={async () => {
                 await CheckForAnonymousCartId()
                 signIn()
-            }}>Sign in</Button>
+            }}>Sign in</ButtonShadcn>
         </>
     )
 }
