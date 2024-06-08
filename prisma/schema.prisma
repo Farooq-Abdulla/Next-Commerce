@@ -41,6 +41,8 @@ model Cart {
   userId      String?    @unique
   user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   CartItem    CartItem[]
+  Order       Order?
+  isArchived  Boolean    @default(false)
 }
 
 model Address {
@@ -69,6 +71,33 @@ model CartItem {
   @@unique([cartId, productId])
 }
 
+model Order {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  paymentId       String   @unique
+  cartId          String   @unique
+  cart            Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  amount          Int
+  billingName     String
+  billingEmail    String
+  billingAddress  String
+  billingCity     String
+  billingState    String
+  billingZip      String
+  billingCountry  String
+  shippingName    String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingZip     String
+  shippingCountry String
+  paymentMethod   String
+  receiptUrl      String
+  status          String
+  receiptEmail    String?
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -81,7 +110,7 @@ model User {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  Cart      Cart?
+  Cart      Cart[]
   Address   Address[]
 
   @@map("users")

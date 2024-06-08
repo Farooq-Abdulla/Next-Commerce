@@ -6,8 +6,9 @@
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function StripeCheckout(totalCartCost: number, cartDetails: any) {
+  const amountInCents = Math.round(totalCartCost * 100);
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: Number(totalCartCost.toFixed(2)) * 100,
+    amount: amountInCents,
     currency: "USD",
     metadata: { cartId: cartDetails.id },
   });

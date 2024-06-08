@@ -2,6 +2,7 @@
 
 
 import { Button } from '@/components/ui/AcertinityButton';
+import { CheckForAnonymousCartId } from '@/ServerActions/CheckForAnonymousCartId';
 import { useRouter } from 'next/navigation';
 
 
@@ -114,7 +115,10 @@ export function CheckOutButton() {
     return (
         <div className='mb-4'>
             <Button
-                onClick={() => router.push("/checkout")}
+                onClick={async () => {
+                    await CheckForAnonymousCartId()
+                    router.push("/checkout")
+                }}
             >
                 CheckOut
             </Button>

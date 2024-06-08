@@ -24,5 +24,7 @@ export async function CheckForAnonymousCartId() {
     } else {
       return null;
     }
+  } else {
+    return null;
   }
 }
