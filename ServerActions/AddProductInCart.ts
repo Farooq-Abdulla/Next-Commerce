@@ -15,7 +15,7 @@ export async function AddProductInCart(productId: string) {
   // Set the anonymous ID in the cookies if it doesn't already exist
   if (!cookieStore.get("anonymousId")) {
     // This sets a cookie in the response headers, which the browser will save
-    cookies().set("anonymousId", anonymousId, {
+    cookieStore.set("anonymousId", anonymousId, {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
     }); // cookie lasts for 30 days
@@ -23,11 +23,13 @@ export async function AddProductInCart(productId: string) {
 
   let userId = user?.id || null;
 
-  // Fetch all active carts for the user or anonymous ID, ordered by creation date
-  const existingCarts = await prisma.cart.findMany({
+  // Fetch the most recent active cart for the user or anonymous ID, ordered by creation date
+  const mostRecentCart = await prisma.cart.findFirst({
     where: {
-      OR: [{ userId: userId }, { anonymousId: anonymousId }],
-      isArchived: false,
+      OR: [
+        { userId: userId, isArchived: false },
+        { anonymousId: anonymousId, isArchived: false },
+      ],
     },
     orderBy: {
       createdAt: "desc",
@@ -37,9 +39,8 @@ export async function AddProductInCart(productId: string) {
     },
   });
 
-  const mostRecentCart = existingCarts.length > 0 ? existingCarts[0] : null;
-
   if (!mostRecentCart) {
+    // Create a new cart for the user or anonymous ID
     await prisma.cart.create({
       data: {
         userId: userId,
@@ -55,10 +56,13 @@ export async function AddProductInCart(productId: string) {
       },
     });
   } else {
+    // Check if the product is already in the cart
     const existingCartItem = mostRecentCart.CartItem.find(
       (item) => item.productId === productId,
     );
+
     if (existingCartItem) {
+      // Update the quantity if the product is already in the cart
       await prisma.cartItem.update({
         where: {
           id: existingCartItem.id,
@@ -68,6 +72,7 @@ export async function AddProductInCart(productId: string) {
         },
       });
     } else {
+      // Add the new product to the cart
       await prisma.cartItem.create({
         data: {
           productId: productId,
