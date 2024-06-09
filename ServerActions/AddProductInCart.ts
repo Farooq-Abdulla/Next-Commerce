@@ -23,8 +23,11 @@ export async function AddProductInCart(productId: string) {
 
   let userId = user?.id || null;
 
+  console.log("Anonymous ID:", anonymousId);
+  console.log("User ID:", userId);
+
   // Fetch the most recent active cart for the user or anonymous ID, ordered by creation date
-  const mostRecentCart = await prisma.cart.findFirst({
+  const existingCarts = await prisma.cart.findMany({
     where: {
       OR: [
         { userId: userId, isArchived: false },
@@ -38,6 +41,13 @@ export async function AddProductInCart(productId: string) {
       CartItem: true,
     },
   });
+
+  // Find the cart that matches either the user ID or anonymous ID specifically
+  const mostRecentCart = existingCarts.find(
+    (cart) => cart.anonymousId === anonymousId || cart.userId === userId,
+  );
+
+  console.log("Most Recent Cart:", mostRecentCart);
 
   if (!mostRecentCart) {
     // Create a new cart for the user or anonymous ID
