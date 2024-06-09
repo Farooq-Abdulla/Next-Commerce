@@ -26,7 +26,7 @@ export async function AddProductInCart(productId: string) {
   // Check if a cart already exists for the user or anonymous ID
   const existingCart = await prisma.cart.findFirst({
     where: {
-      OR: [{ userId }, { anonymousId }],
+      OR: [{ anonymousId }, { userId }],
       isArchived: false,
     },
     include: {
