@@ -37,7 +37,7 @@ model Cart {
   id          String     @id @default(cuid())
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  anonymousId String?    @unique
+  anonymousId String?
   userId      String?
   user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   CartItem    CartItem[]

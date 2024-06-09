@@ -13,7 +13,7 @@ export async function CheckForAnonymousCartId() {
     return null;
   }
   if (!user) {
-    const anonymousCart = await prisma.cart.findUnique({
+    const anonymousCart = await prisma.cart.findFirst({
       where: {
         anonymousId: anonymousId,
       },

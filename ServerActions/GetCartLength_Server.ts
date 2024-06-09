@@ -36,7 +36,7 @@ export async function GetCartLength_Server() {
           }
         });
       } else {
-        const anonymousCart = await prisma.cart.findUnique({
+        const anonymousCart = await prisma.cart.findFirst({
           where: { anonymousId: anonymousId },
           include: {
             CartItem: {
