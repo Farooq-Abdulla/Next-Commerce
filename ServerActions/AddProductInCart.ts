@@ -53,7 +53,7 @@ export async function AddProductInCart(productId: string) {
 
   if (!cartToUse) {
     // No suitable cart found, create a new one
-    const newCart = await prisma.cart.create({
+    cartToUse = await prisma.cart.create({
       data: {
         userId,
         anonymousId,
@@ -68,7 +68,7 @@ export async function AddProductInCart(productId: string) {
       },
     });
 
-    console.log("New Cart Created:", newCart);
+    console.log("New Cart Created:", cartToUse);
     return;
   }
 
