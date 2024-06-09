@@ -37,11 +37,11 @@ export async function AddProductInCart(productId: string) {
     },
   });
 
-  console.log("Cart:", existingCart);
+  console.log("Existing Cart:", existingCart);
 
-  if (!existingCart || existingCart.anonymousId !== anonymousId) {
+  if (!existingCart) {
     // Create a new cart for the user or anonymous ID
-    await prisma.cart.create({
+    const newCart = await prisma.cart.create({
       data: {
         userId: userId,
         anonymousId: anonymousId,
@@ -55,7 +55,12 @@ export async function AddProductInCart(productId: string) {
         },
       },
     });
-  } else {
+
+    console.log("New Cart Created:", newCart);
+  } else if (
+    (userId && existingCart.userId === userId) ||
+    (!userId && existingCart.anonymousId === anonymousId)
+  ) {
     // Check if the product is already in the cart
     const existingCartItem = existingCart.CartItem.find(
       (item) => item.productId === productId,
@@ -71,6 +76,10 @@ export async function AddProductInCart(productId: string) {
           quantity: existingCartItem.quantity + 1,
         },
       });
+
+      console.log(
+        `Updated CartItem ID ${existingCartItem.id} Quantity to ${existingCartItem.quantity + 1}`,
+      );
     } else {
       // Add the new product to the cart
       await prisma.cartItem.create({
@@ -80,6 +89,26 @@ export async function AddProductInCart(productId: string) {
           cartId: existingCart.id,
         },
       });
+
+      console.log(`Added New CartItem to Cart ID ${existingCart.id}`);
     }
+  } else {
+    // If there's a mismatch, create a new cart
+    const newCart = await prisma.cart.create({
+      data: {
+        userId: userId,
+        anonymousId: anonymousId,
+        CartItem: {
+          create: [
+            {
+              productId: productId,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+    });
+
+    console.log("New Cart Created Due to Mismatch:", newCart);
   }
 }
