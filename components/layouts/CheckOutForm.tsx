@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { CreateOrder } from '@/ServerActions/CreateOrder';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Stripe from "stripe";
@@ -218,7 +219,7 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                                         <DialogTrigger asChild>
                                             <Button className="mt-3">Place Order</Button>
                                         </DialogTrigger>
-                                        <DialogContent className="sm:max-w-[425px] text-white">
+                                        <DialogContent className="sm:max-w-[425px] text-white h-full  overflow-y-scroll ">
                                             <DialogHeader>
                                                 <DialogTitle>Place Order</DialogTitle>
                                                 <DialogDescription>Make an Order here</DialogDescription>
@@ -234,9 +235,9 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                                             }} />
                                             <DialogFooter className="sm:justify-start">
                                                 <DialogClose asChild>
-                                                    <ButtonShadcn type="button">Close</ButtonShadcn>
+                                                    <ButtonShadcn type="button" className='my-2'>Close</ButtonShadcn>
                                                 </DialogClose>
-                                                <ButtonShadcn onClick={onSubmit} disabled={isLoading}>Pay</ButtonShadcn>
+                                                <ButtonShadcn onClick={onSubmit} disabled={isLoading} className='my-2'>Pay</ButtonShadcn>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>
@@ -245,7 +246,7 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                             <div className="md:col-span-1">
                                 <h3 className="text-xl font-bold mb-4">Order Summary</h3>
                                 {cartDetails.CartItem.map((item) => (
-                                    <div key={item.id} className="mb-6 flex">
+                                    <Link href={`/${item.productId}`} key={item.id}><div key={item.id} className="mb-6 flex cursor-pointer">
                                         <Image
                                             src={item.product.imageUrl}
                                             alt={item.product.name}
@@ -260,6 +261,7 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                                             <p className="text-sm dark:text-white text-black">Price: ${Number(item.product.price)}</p>
                                         </div>
                                     </div>
+                                    </Link>
                                 ))}
                                 <div className="text-lg font-mono mb-2">Total Price: ${totalCartCost.toFixed(2)}</div>
                             </div>
