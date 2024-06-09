@@ -9,12 +9,19 @@ export async function AddProductInCart(productId: string) {
   const user = session?.user;
   const cookieStore = cookies();
 
-  let userId = user?.id || null;
+  // Retrieve the anonymous ID from the cookies, or create a new one if it doesn't exist
   let anonymousId = cookieStore.get("anonymousId")?.value || randomUUID();
 
+  // Set the anonymous ID in the cookies if it doesn't already exist
   if (!cookieStore.get("anonymousId")) {
-    cookieStore.set("anonymousId", anonymousId);
+    // This sets a cookie in the response headers, which the browser will save
+    cookies().set("anonymousId", anonymousId, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    }); // cookie lasts for 30 days
   }
+
+  let userId = user?.id || null;
 
   // Fetch all active carts for the user or anonymous ID, ordered by creation date
   const existingCarts = await prisma.cart.findMany({
