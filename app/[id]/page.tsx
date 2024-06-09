@@ -1,6 +1,5 @@
 
 import AddtoCartButton from "@/components/layouts/AddtoCartButton"
-import { Button } from "@/components/ui/AcertinityButton"
 
 import { GetProductById } from "@/ServerActions/GetProductById"
 import Image from "next/image"
@@ -21,7 +20,7 @@ const ProductID = async ({ params: { id } }: Props) => {
             {/* Radial gradient for the container to give a faded look */}
             <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
             <div className="text-4xl sm:text-7xl font-bold relative z-20 bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-500 py-8">
-                <Button>Buy Now</Button>
+                {/* <Button>Buy Now</Button> */}
                 <div className="w-full mt-5  flex ">
                     <div className="w-1/2 flex justify-center items-center mx-5">
                         <Image src={`${Product?.imageUrl}`} alt="Image" width={900} height={900} className="rounded-2xl cursor-pointer hover:shadow-xl hover:dark:shadow-gray-100 hover:shadow-slate-900" />

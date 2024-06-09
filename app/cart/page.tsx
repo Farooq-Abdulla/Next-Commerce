@@ -8,6 +8,7 @@ import { TracingBeam } from '@/components/ui/tracing-beam';
 import { GetCartDetails } from '@/ServerActions/GetCartDetails';
 import { GetCartLength_Server } from '@/ServerActions/GetCartLength_Server';
 import { RemoveProductFromCart } from '@/ServerActions/RemoveProductFromCart';
+import { revalidatePath } from 'next/cache';
 
 
 import Image from 'next/image';
@@ -15,7 +16,7 @@ import Image from 'next/image';
 import { twMerge } from "tailwind-merge";
 
 const CartComponent = async () => {
-
+    revalidatePath("/")
 
 
     // const [cartDetails, setCartDetails] = useState<Cart & { CartItem: (CartItem & { product: any })[] } | null>(null);

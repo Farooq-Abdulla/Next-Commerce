@@ -27,10 +27,13 @@ import {
 } from "@/components/ui/dialog";
 
 import { CreateOrder } from '@/ServerActions/CreateOrder';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Stripe from "stripe";
 import { ButtonShadcn } from '../ui/button';
 import { ToastAction } from '../ui/toast';
 import { useToast } from '../ui/use-toast';
+
 
 const formSchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -51,6 +54,7 @@ interface Props {
 
 
 const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
+    const mainStripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     const stripe = useStripe();
     const elements = useElements();
     const [message, setMessage] = useState('');
@@ -58,6 +62,7 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
     const [email, setEmail] = useState('');
     const [open, setOpen] = useState(false)
     const { toast } = useToast()
+    const router = useRouter()
 
     //   useEffect(() => {
     //     if (!stripe) {
@@ -157,10 +162,11 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                 return_url: "http://localhost:3000/orders",
                 receipt_email: email
             },
-
+            redirect: "if_required"
         });
         console.log("After confirmPayment")
-
+        // const PaymentObject = await stripe.retrievePaymentIntent(clientSecret)
+        // console.log(result)
         // This point will only be reached if there is an immediate error when
         // confirming the payment. Otherwise, your customer will be redirected to
         // your `return_url`. For some payment methods like iDEAL, your customer will
@@ -175,13 +181,15 @@ const CheckOutForm = ({ totalCartCost, cartDetails, clientSecret }: Props) => {
                 action: <ToastAction altText="Try again">Try again</ToastAction>,
             })
         } else {
-            await CreateOrder(result)
+            await CreateOrder(result, cartDetails.id)
+            // console.log(clientSecret)
             toast({
                 variant: "default",
                 title: "Success!",
                 description: "Your payment was successful.",
                 // action: <ToastAction altText="Go back">Go back</ToastAction>,
             })
+            router.push("/orders")
         }
 
         setIsLoading(false);

@@ -38,7 +38,7 @@ model Cart {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   anonymousId String?    @unique
-  userId      String?    @unique
+  userId      String?
   user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   CartItem    CartItem[]
   Order       Order?
@@ -93,7 +93,7 @@ model Order {
   shippingZip     String
   shippingCountry String
   paymentMethod   String
-  receiptUrl      String
+  receiptUrl      String?
   status          String
   receiptEmail    String?
 }

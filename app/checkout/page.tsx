@@ -11,12 +11,13 @@ import CheckOutClient from "./random";
 
 
 export default async function ChecKOutPage() {
+
     const session = await getServerSession()
     const user = session?.user;
 
 
     if (!user) {
-        redirect('/api/auth/signin?callbackUrl=/cart')
+        redirect('/api/auth/signin?callbackUrl=/')
 
     }
     await MergeCarts()
@@ -24,7 +25,7 @@ export default async function ChecKOutPage() {
 
     const cartDetails = await GetCartDetails();
     const { totalCartCost } = await GetCartLength_Server()
-    const clientSecret = await StripeCheckout(Number(totalCartCost.toFixed(2)), cartDetails)
+    const clientSecret = await StripeCheckout(Number(totalCartCost.toFixed(2)), cartDetails?.id)
 
     if (cartDetails === null) {
         return <NullCart />

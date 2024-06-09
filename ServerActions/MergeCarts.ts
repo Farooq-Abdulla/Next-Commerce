@@ -28,16 +28,23 @@ export async function MergeCarts() {
     return null;
   }
 
-  const userCart = await prisma.cart.findUnique({
-    where: { userId: user.id },
+  // Fetch all active carts for the user, ordered by creation date
+  const userCarts = await prisma.cart.findMany({
+    where: {
+      userId: user.id,
+      isArchived: false,
+    },
+    orderBy: { createdAt: "desc" },
     include: { CartItem: true },
   });
+  // console.log(userCarts);
 
-  if (!userCart) {
+  if (userCarts.length === 0) {
     // Create a new cart for the user and merge anonymous cart items
     await prisma.cart.create({
       data: {
         userId: user.id,
+        isArchived: false,
         CartItem: {
           create: anonymousCart.CartItem.map((item) => ({
             productId: item.productId,
@@ -47,10 +54,10 @@ export async function MergeCarts() {
       },
     });
   } else {
-    const mergedItems = [...userCart.CartItem];
+    const userCart = userCarts[0]; // Consider the most recently created cart for merging
 
     for (const item of anonymousCart.CartItem) {
-      const existingItem = mergedItems.find(
+      const existingItem = userCart.CartItem.find(
         (cartItem) => cartItem.productId === item.productId,
       );
 
@@ -77,13 +84,22 @@ export async function MergeCarts() {
       }
     }
   }
+
   await prisma.cartItem.deleteMany({
     where: { cartId: anonymousCart.id },
   });
 
-  await prisma.cart.delete({
+  // Check again if the anonymous cart exists before deleting
+  const checkAnonymousCart = await prisma.cart.findUnique({
     where: { id: anonymousCart.id },
   });
+  // console.log("checkAnonymousCart : " + checkAnonymousCart);
+
+  if (checkAnonymousCart) {
+    await prisma.cart.delete({
+      where: { id: anonymousCart.id },
+    });
+  }
 
   cookieStore.delete("anonymousCartId");
   cookieStore.delete("anonymousId");

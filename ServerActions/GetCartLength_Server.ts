@@ -16,7 +16,7 @@ export async function GetCartLength_Server() {
 
     if (anonymousId) {
       if (user) {
-        const userCart = await prisma.cart.findUnique({
+        const userCarts = await prisma.cart.findMany({
           where: { userId: user.id },
           include: {
             CartItem: {
@@ -27,12 +27,14 @@ export async function GetCartLength_Server() {
           },
         });
 
-        if (userCart) {
-          userCart.CartItem.forEach((item) => {
-            totalCartLength += item.quantity;
-            totalCartCost += item.product.price.toNumber() * item.quantity;
-          });
-        }
+        userCarts.forEach((cart) => {
+          if (cart.isArchived === false) {
+            cart.CartItem.forEach((item) => {
+              totalCartLength += item.quantity;
+              totalCartCost += item.product.price.toNumber() * item.quantity;
+            });
+          }
+        });
       } else {
         const anonymousCart = await prisma.cart.findUnique({
           where: { anonymousId: anonymousId },
@@ -53,7 +55,7 @@ export async function GetCartLength_Server() {
         }
       }
     } else if (user) {
-      const userCart = await prisma.cart.findUnique({
+      const userCarts = await prisma.cart.findMany({
         where: { userId: user.id },
         include: {
           CartItem: {
@@ -64,14 +66,14 @@ export async function GetCartLength_Server() {
         },
       });
 
-      if (userCart) {
-        userCart.CartItem.forEach((item) => {
-          totalCartLength += item.quantity;
-          totalCartCost += item.product.price.toNumber() * item.quantity;
-        });
-      } else {
-        totalCartLength = 0;
-      }
+      userCarts.forEach((cart) => {
+        if (cart.isArchived === false) {
+          cart.CartItem.forEach((item) => {
+            totalCartLength += item.quantity;
+            totalCartCost += item.product.price.toNumber() * item.quantity;
+          });
+        }
+      });
     }
 
     return { totalCartLength, totalCartCost };

@@ -3,20 +3,23 @@ import getServerSession from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
 import { cookies } from "next/headers";
 
 export async function GetCartDetails() {
   const session = await getServerSession();
   const user: User | null = session?.user;
   const cookieStore = cookies();
-  // const anonymousCartId = await CheckForAnonymousCartId();
   const anonymousId = cookieStore.get("anonymousId")?.value;
 
   try {
-    const CartDetails = await prisma.cart.findFirst({
+    // Fetch all active carts for the user or anonymous ID, ordered by creation date
+    const cartDetails = await prisma.cart.findMany({
       where: {
         OR: [{ userId: user?.id }, { anonymousId: anonymousId! }],
+        isArchived: false,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
       include: {
         CartItem: {
@@ -27,11 +30,14 @@ export async function GetCartDetails() {
       },
     });
 
-    if (CartDetails) {
+    // Get the most recent active cart
+    const mostRecentCart = cartDetails.length > 0 ? cartDetails[0] : null;
+
+    if (mostRecentCart) {
       // Convert Prisma Decimal to plain JavaScript numbers
       const plainCartDetails = {
-        ...CartDetails,
-        CartItem: CartDetails.CartItem.map((item) => ({
+        ...mostRecentCart,
+        CartItem: mostRecentCart.CartItem.map((item) => ({
           ...item,
           product: {
             ...item.product,
