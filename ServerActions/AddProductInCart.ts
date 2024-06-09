@@ -9,28 +9,25 @@ export async function AddProductInCart(productId: string) {
   const user = session?.user;
   const cookieStore = cookies();
 
-  let anonymousId = cookieStore.get("anonymousId")?.value || randomUUID();
+  let userId = user?.id || null;
+  let anonymousId = cookieStore.get("anonymousId")?.value;
 
-  if (!cookieStore.get("anonymousId")) {
+  if (!anonymousId) {
+    anonymousId = randomUUID();
     cookieStore.set("anonymousId", anonymousId, {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
     });
   }
 
-  const userId = user?.id || null;
+  // console.log("Anonymous ID:", anonymousId);
+  // console.log("User ID:", userId);
 
-  console.log("Anonymous ID:", anonymousId);
-  console.log("User ID:", userId);
-
-  // Fetch the most recent active cart for the anonymous ID or user ID
+  // Check if a cart already exists for the user or anonymous ID
   const existingCart = await prisma.cart.findFirst({
     where: {
-      OR: [{ anonymousId }, { userId }],
+      OR: [{ userId }, { anonymousId }],
       isArchived: false,
-    },
-    orderBy: {
-      createdAt: "desc",
     },
     include: {
       CartItem: true,
@@ -39,21 +36,9 @@ export async function AddProductInCart(productId: string) {
 
   console.log("Existing Cart:", existingCart);
 
-  // Check if we need to create a new cart
-  let cartToUse;
-
-  if (existingCart) {
-    // If an existing cart is found, determine if it should be used based on userId or anonymousId
-    if (userId && existingCart.userId === userId) {
-      cartToUse = existingCart;
-    } else if (!userId && existingCart.anonymousId === anonymousId) {
-      cartToUse = existingCart;
-    }
-  }
-
-  if (!cartToUse) {
-    // No suitable cart found, create a new one
-    cartToUse = await prisma.cart.create({
+  if (!existingCart) {
+    // Create a new cart for the user or anonymous ID
+    await prisma.cart.create({
       data: {
         userId,
         anonymousId,
@@ -68,39 +53,38 @@ export async function AddProductInCart(productId: string) {
       },
     });
 
-    console.log("New Cart Created:", cartToUse);
-    return;
-  }
-
-  // If an existing cart is to be used, check if the product is already in the cart
-  const existingCartItem = cartToUse.CartItem.find(
-    (item) => item.productId === productId,
-  );
-
-  if (existingCartItem) {
-    // Update the quantity if the product is already in the cart
-    await prisma.cartItem.update({
-      where: {
-        id: existingCartItem.id,
-      },
-      data: {
-        quantity: existingCartItem.quantity + 1,
-      },
-    });
-
-    console.log(
-      `Updated CartItem ID ${existingCartItem.id} Quantity to ${existingCartItem.quantity + 1}`,
-    );
+    // console.log("New Cart Created");
   } else {
-    // Add the new product to the cart
-    await prisma.cartItem.create({
-      data: {
-        productId,
-        quantity: 1,
-        cartId: cartToUse.id,
-      },
-    });
+    // Check if the product is already in the cart
+    const existingCartItem = existingCart.CartItem.find(
+      (item) => item.productId === productId,
+    );
 
-    console.log(`Added New CartItem to Cart ID ${cartToUse.id}`);
+    if (existingCartItem) {
+      // Update the quantity if the product is already in the cart
+      await prisma.cartItem.update({
+        where: {
+          id: existingCartItem.id,
+        },
+        data: {
+          quantity: existingCartItem.quantity + 1,
+        },
+      });
+
+      console.log(
+        `Updated CartItem ID ${existingCartItem.id} Quantity to ${existingCartItem.quantity + 1}`,
+      );
+    } else {
+      // Add the new product to the cart
+      await prisma.cartItem.create({
+        data: {
+          productId,
+          quantity: 1,
+          cartId: existingCart.id,
+        },
+      });
+
+      console.log(`Added new product to Cart ID ${existingCart.id}`);
+    }
   }
 }
