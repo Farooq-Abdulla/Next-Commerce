@@ -1,3 +1,4 @@
+import { signIn } from "@/auth";
 import getServerSession from "@/lib/getServerSession";
 import prisma from "@/lib/prisma";
 import { format } from "date-fns";
@@ -10,8 +11,20 @@ const OrdersPage = async () => {
 
     if (!user) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <h2 className="text-2xl">No user found.</h2>
+            <div className="h-full w-full dark:bg-black bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center">
+                <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+                <div className="flex flex-col justify-center items-center min-h-screen">
+                    <h1 className="text-4xl sm:text-7xl font-bold dark:text-white text-black mb-4">Sign In to see your Order details</h1>
+                    <form action={async () => {
+                        'use server'
+                        await signIn()
+                    }}>
+                        <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 transition duration-200 rounded-lg text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset]">
+                            Sign In
+                        </button>
+                    </form>
+
+                </div>
             </div>
         );
     }
