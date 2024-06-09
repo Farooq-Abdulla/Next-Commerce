@@ -9,16 +9,13 @@ export async function AddProductInCart(productId: string) {
   const user = session?.user;
   const cookieStore = cookies();
 
-  // Retrieve the anonymous ID from the cookies, or create a new one if it doesn't exist
   let anonymousId = cookieStore.get("anonymousId")?.value || randomUUID();
 
-  // Set the anonymous ID in the cookies if it doesn't already exist
   if (!cookieStore.get("anonymousId")) {
-    // This sets a cookie in the response headers, which the browser will save
     cookieStore.set("anonymousId", anonymousId, {
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
-    }); // cookie lasts for 30 days
+    });
   }
 
   let userId = user?.id || null;
@@ -26,13 +23,11 @@ export async function AddProductInCart(productId: string) {
   console.log("Anonymous ID:", anonymousId);
   console.log("User ID:", userId);
 
-  // Fetch the most recent active cart for the user or anonymous ID, ordered by creation date
-  const existingCarts = await prisma.cart.findMany({
+  // Fetch the most recent active cart for the anonymous ID or user ID
+  const mostRecentCart = await prisma.cart.findFirst({
     where: {
-      OR: [
-        { userId: userId, isArchived: false },
-        { anonymousId: anonymousId, isArchived: false },
-      ],
+      OR: [{ userId: userId }, { anonymousId: anonymousId }],
+      isArchived: false,
     },
     orderBy: {
       createdAt: "desc",
@@ -42,14 +37,9 @@ export async function AddProductInCart(productId: string) {
     },
   });
 
-  // Find the cart that matches either the user ID or anonymous ID specifically
-  const mostRecentCart = existingCarts.find(
-    (cart) => cart.anonymousId === anonymousId || cart.userId === userId,
-  );
-
   console.log("Most Recent Cart:", mostRecentCart);
 
-  if (!mostRecentCart) {
+  if (!mostRecentCart || mostRecentCart.anonymousId !== anonymousId) {
     // Create a new cart for the user or anonymous ID
     await prisma.cart.create({
       data: {
